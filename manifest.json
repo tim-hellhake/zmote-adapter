@@ -1,0 +1,19 @@
+{
+  "manifest_version": 1,
+  "id": "zmote-adapter",
+  "name": "zmote",
+  "short_name": "zmote",
+  "version": "0.1.0",
+  "description": "Control you IR devices with zmote (https://www.zmote.io/)",
+  "homepage_url": "https://github.com/tim-hellhake/zmote-adapter#readme",
+  "license": "MPL-2.0",
+  "author": "Tim Hellhake",
+  "gateway_specific_settings": {
+    "webthings": {
+      "exec": "{nodeLoader} {path}",
+      "strict_min_version": "0.10.0",
+      "strict_max_version": "*",
+      "primary_type": "adapter"
+    }
+  }
+}

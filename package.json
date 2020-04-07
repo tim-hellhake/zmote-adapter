@@ -1,7 +1,7 @@
 {
   "name": "zmote-adapter",
   "display_name": "zmote",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Control you IR devices with zmote (https://www.zmote.io/)",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

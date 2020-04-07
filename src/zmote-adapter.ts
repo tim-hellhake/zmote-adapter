@@ -65,6 +65,7 @@ class CommandDevice extends Device {
 
 export class ZmoteAdapter extends Adapter {
   private db: Database;
+  private pairing = false
 
   constructor(addonManager: any, manifest: any) {
     super(addonManager, ZmoteAdapter.name, manifest.name);
@@ -95,11 +96,23 @@ export class ZmoteAdapter extends Adapter {
 
   async startPairing() {
     console.log('Starting discovery');
+    this.pairing = true;
     const zmotes = await this.findZmotes();
 
     for (const zmote of zmotes) {
       console.log(`Found zmote ${zmote.name} at ${zmote.localIP}`);
-      this.listenForIrCommands(zmote);
+      this.startListenLoop(zmote);
+    }
+  }
+
+  async cancelPairing() {
+    console.log('Stopping discovery');
+    this.pairing = false;
+  }
+
+  private async startListenLoop(zmote: Zmote) {
+    while (this.pairing) {
+      await this.listenForIrCommands(zmote);
     }
   }
 

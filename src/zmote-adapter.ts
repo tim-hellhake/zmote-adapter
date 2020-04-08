@@ -35,7 +35,7 @@ interface Command {
 }
 
 class CommandDevice extends Device {
-  constructor(adapter: any, private command: Command) {
+  constructor(adapter: any, public command: Command) {
     super(adapter, command.id);
     this['@context'] = 'https://iot.mozilla.org/schemas/';
     this.name = command.name;
@@ -66,6 +66,7 @@ class CommandDevice extends Device {
 export class ZmoteAdapter extends Adapter {
   private db: Database;
   private pairing = false
+  private foundDevices: { [key: string]: CommandDevice } = {};
 
   constructor(addonManager: any, manifest: any) {
     super(addonManager, ZmoteAdapter.name, manifest.name);
@@ -105,6 +106,17 @@ export class ZmoteAdapter extends Adapter {
     }
   }
 
+  handleDeviceSaved(deviceId: string) {
+    const device = this.foundDevices[deviceId];
+
+    if (device) {
+      delete this.foundDevices[deviceId];
+      this.saveDevice(device);
+    } else {
+      console.log(`Saved device ${deviceId} not found`);
+    }
+  }
+
   async cancelPairing() {
     console.log('Stopping discovery');
     this.pairing = false;
@@ -141,16 +153,22 @@ export class ZmoteAdapter extends Adapter {
       console.log(`Learned command ${command.data}`);
       const device = new CommandDevice(this, command);
       this.handleDeviceAdded(device);
-      const config: Config = await this.db.loadConfig();
-
-      config.version = config.version || '0.1.0';
-      config.commands = config.commands || [];
-      config.commands.push(command);
-      this.db.saveConfig(config);
+      this.foundDevices[device.id] = device;
+      console.log(`Found device ${device.id}`);
     } else {
       if (parts.length == 1) {
         console.log(`No IR signal received by ${zmote.name} at ${zmote.localIP}`);
       }
     }
+  }
+
+  async saveDevice(device: CommandDevice) {
+    console.log(`Saving device ${device.id}`);
+    const config: Config = await this.db.loadConfig();
+
+    config.version = config.version || '0.1.0';
+    config.commands = config.commands || [];
+    config.commands.push(device.command);
+    this.db.saveConfig(config);
   }
 }

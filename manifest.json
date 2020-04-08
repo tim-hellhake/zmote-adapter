@@ -3,7 +3,7 @@
   "id": "zmote-adapter",
   "name": "zmote",
   "short_name": "zmote",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Control you IR devices with zmote (https://www.zmote.io/)",
   "homepage_url": "https://github.com/tim-hellhake/zmote-adapter#readme",
   "license": "MPL-2.0",
